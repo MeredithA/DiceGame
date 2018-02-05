@@ -1,54 +1,62 @@
 "use strict"
-function addName(){
-	let name = prompt("Please enter your name:");
-	return name;
-}
-function addName(){
-	let name = prompt("Please enter your name:");
-	return name;
-}
-function getTroops(diceArray){
-	let rollResults=[];
-	for(let i=0; i<diceArray.length; i++) {
-		let roll=rollDice(diceArray[i]);
-		rollResults.push(roll-1);
-			
-	}
-	let infantryNumber=rollResults[0]+rollResults[1];
-	let artilleryNumber=rollResults[2]+rollResults[3]+rollResults[4];
-	let vehiclesNumber=rollResults[5]
-	let troops = [infantryNumber, artilleryNumber, vehiclesNumber];
-	return troops;
-}
-		
 
-function rollDice(diceNumber){
+function runGame() {
+	let diceArray = [4, 6, 8, 10, 12, 20];
+	let	playerOne = {
+		name: "Player One",
+		troops: 9000000,
+		total: 0
+	};
+		
+	let playerTwo = {
+		name: "Player Two",
+		troops: 9000000,
+		total: 0
+	};
+
+	while(playerOne.troops > 0 && playerTwo.troops > 0) {
+		let playerOneRolls = rollAllDice(diceArray);
+		let playerTwoRolls = rollAllDice(diceArray);
+
+		playerOne.total = totalUpDiceRolls(playerOneRolls);
+		playerTwo.total = totalUpDiceRolls(playerTwoRolls);
+		adjustScoreAndCheckForWinner(playerOne, playerTwo);
+	}
+}
+
+function rollAllDice(diceArray){
+	let rollResults=[];
+	for(let i=0; i<diceArray.length; i++){
+		let roll=rollDie(diceArray[i]);
+		rollResults.push(roll-1);
+	}
+	return rollResults;
+}
+
+function totalUpDiceRolls(rollResults){
+	let totalTroops=rollResults[0]+rollResults[1]+rollResults[2]+rollResults[3]+rollResults[4]+rollResults[5];
+	return totalTroops;
+}
+
+function rollDie(diceNumber){
 	let randomNumber=Math.floor(Math.random()*diceNumber + 1);
 	return randomNumber;
 }
-function runGame(){
-	
-	let diceArray=[20,20,20,20,20,20];
-	var playerOne = {
-		"Name": "playerOne",
-		"Score": 0,
-		"Troops": []
-	};
-	let playerTwo =  {
-		"Name": "playerTwo",
-		"Score": 0,
-		"Troops": []
-	};
-	playerOne["Name"] = prompt("Player One What is Your Name?")
-	playerOne["Troops"] = getTroops(diceArray);
-	playerTwo["Troops"] = getTroops(diceArray);
 
-	console.log(playerOne["Troops"]);
-	console.log(playerTwo["Troops"]);
-	//here
-	let infantryNumber=["You have ____ infantry."]
-	let artilleryNumber=["You have ____ artillery."]
-	let vehicleNumber=["You have ____ vehicles."]
+function adjustScoreAndCheckForWinner(playerOne, playerTwo){
+	if (playerOne.total>playerTwo.total){
+		playerOne.troops-=(playerOne.total + (playerOne.total-playerTwo.total))
+	}
+	else if (playerOne.total<playerTwo.total){
+		playerTwo.troops-=(playerTwo.total + (playerTwo.total-playerOne.total))
+	}
 
+
+	if (playerOne.troops <= 0){
+		console.log(playerTwo.name + " wins!");
+	}
+	else if (playerTwo.troops <= 0){
+		console.log(playerOne.name + " wins!");
+	}
 }
 runGame();
